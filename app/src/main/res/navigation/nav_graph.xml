@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/home">
+
+    <fragment
+        android:id="@+id/home"
+        android:name="seifemadhamdy.mazaadyportal.presentation.ui.fragments.HomeFragment"
+        android:label="@string/home" />
+
+    <fragment
+        android:id="@+id/form"
+        android:name="seifemadhamdy.mazaadyportal.presentation.ui.fragments.FormFragment"
+        android:label="@string/form" />
+</navigation>
