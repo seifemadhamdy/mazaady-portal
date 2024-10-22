@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CustomChipStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">
+        <item name="android:textColor">@drawable/text_chip_state_list</item>
+        <item name="chipBackgroundColor">@drawable/bg_chip_state_list</item>
+        <item name="android:textSize">14sp</item>
+        <item name="chipCornerRadius">8dp</item>
+        <item name="chipMinTouchTargetSize">0dp</item>
+        <item name="textStartPadding">0dp</item>
+        <item name="textEndPadding">0dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="chipStartPadding">15dp</item>
+        <item name="chipEndPadding">15dp</item>
+    </style>
+</resources>

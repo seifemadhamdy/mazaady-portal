@@ -6,4 +6,6 @@
     <string name="discover">Discover</string>
     <string name="message">Message</string>
     <string name="profile">Profile</string>
+    <string name="_1600_points"><b>+1600</b> Points</string>
+    <string name="upcoming_course_of_this_week"><b>Upcoming course</b> of this week</string>
 </resources>
