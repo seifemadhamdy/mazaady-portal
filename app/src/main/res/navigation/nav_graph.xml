@@ -9,8 +9,16 @@
         android:name="seifemadhamdy.mazaadyportal.presentation.ui.fragments.HomeFragment"
         android:label="@string/home" />
 
+    <action
+        android:id="@+id/action_navigate_to_fragmentHome"
+        app:destination="@id/home" />
+
     <fragment
         android:id="@+id/form"
         android:name="seifemadhamdy.mazaadyportal.presentation.ui.fragments.FormFragment"
         android:label="@string/form" />
+
+    <action
+        android:id="@+id/action_navigate_to_fragmentForm"
+        app:destination="@id/form" />
 </navigation>

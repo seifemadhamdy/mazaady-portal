@@ -9,7 +9,7 @@
         android:theme="@style/Theme.MazaadyPortal"
         tools:targetApi="34">
         <activity
-            android:name=".AppActivity"
+            android:name=".presentation.ui.activities.AppActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
