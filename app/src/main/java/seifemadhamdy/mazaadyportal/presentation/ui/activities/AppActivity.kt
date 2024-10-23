@@ -1,9 +1,11 @@
 package seifemadhamdy.mazaadyportal.presentation.ui.activities
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -18,15 +20,13 @@ import seifemadhamdy.mazaadyportal.presentation.ui.viewmodels.AppViewModel
 
 class AppActivity : AppCompatActivity() {
     private val binding: ActivityAppBinding by lazy { ActivityAppBinding.inflate(layoutInflater) }
-
-    private val viewModel: AppViewModel by viewModels()
     private lateinit var navController: NavController
+    private val viewModel: AppViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(binding.root)
-
         setupWindowInsets()
         setupNavigation()
         setupTabLayout()
@@ -34,7 +34,7 @@ class AppActivity : AppCompatActivity() {
     }
 
     private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.mainConstraintLayout) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
@@ -42,12 +42,22 @@ class AppActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
+        navController =
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+    }
+
+    private fun addBadgeToTabLayout() {
+        binding.tabLayout.getTabAt(2)?.orCreateBadge?.let { badge ->
+            badge.apply {
+                backgroundColor = ContextCompat.getColor(this@AppActivity, R.color.color_EC5F5F)
+                badgeTextColor = Color.WHITE
+                number = 2
+            }
+        }
     }
 
     private fun setupTabLayout() {
+        addBadgeToTabLayout()
         binding.tabLayout.addOnTabSelectedListener(TabSelectionListener())
     }
 
@@ -64,7 +74,15 @@ class AppActivity : AppCompatActivity() {
 
     private inner class TabSelectionListener : TabLayout.OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
-            tab?.position?.let { position -> viewModel.onTabSelected(position) }
+            tab?.position?.let { position ->
+                if (position == 2) {
+                    tab.removeBadge()
+                } else {
+                    addBadgeToTabLayout()
+                }
+
+                viewModel.onTabSelected(position)
+            }
         }
 
         override fun onTabUnselected(tab: TabLayout.Tab?) = Unit

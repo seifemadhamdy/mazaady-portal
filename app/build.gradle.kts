@@ -47,7 +47,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.glide)
-    implementation(libs.dotsindicator)
+    implementation(libs.ru.scrollingpagerindicator)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

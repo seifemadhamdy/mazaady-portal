@@ -1,4 +1,5 @@
 <resources>
+    <!--Theme Colors-->
     <color name="md_theme_primary">#8E4954</color>
     <color name="md_theme_onPrimary">#FFFFFF</color>
     <color name="md_theme_primaryContainer">#FFD9DD</color>
@@ -140,4 +141,17 @@
     <color name="md_theme_surfaceContainer_highContrast">#FBEAEB</color>
     <color name="md_theme_surfaceContainerHigh_highContrast">#F6E4E5</color>
     <color name="md_theme_surfaceContainerHighest_highContrast">#F0DEDF</color>
+    <!--Design Specific Colors-->
+    <color name="color_9D9FA0">#FF9D9FA0</color>
+    <color name="color_EC5F5F">#FFEC5F5F</color>
+    <color name="color_F6F7FA">#FFF6F7FA</color>
+    <color name="color_303030">#FF303030</color>
+    <color name="color_FCD034">#FFFCD034</color>
+    <color name="color_EEEEEE">#FFEEEEEE</color>
+    <color name="color_C7C9D9">#FFC7C9D9</color>
+    <color name="color_4DC9D1">#FF4DC9D1</color>
+    <color name="color_FCCC75">#FFFCCC75</color>
+    <color name="color_8C8C8C">#FF8C8C8C</color>
+    <color name="color_0082CD">#FF0082CD</color>
+    <color name="color_8D5EF2">#FF8D5EF2</color>
 </resources>

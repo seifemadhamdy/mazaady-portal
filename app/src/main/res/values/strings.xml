@@ -7,5 +7,21 @@
     <string name="message">Message</string>
     <string name="profile">Profile</string>
     <string name="_1600_points"><b>+1600</b> Points</string>
-    <string name="upcoming_course_of_this_week"><b>Upcoming course</b> of this week</string>
+    <string name="upcoming_course_of_this_week"><b>Upcoming</b> course of this week</string>
+    <string name="all">All</string>
+    <string name="ui_ux">UI/UX</string>
+    <string name="illustration">Illustration</string>
+    <string name="_3d_animation">3D Animation</string>
+    <string name="hello_samuel">Hello, Samuel!</string>
+    <string name="free_e_book">Free e-book</string>
+    <string name="step_design_sprint_for_nbeginner">Step design sprint for \nbeginner</string>
+    <string name="basic_skill_for_sketch_nillustration">Basic skill for sketch \nillustration</string>
+    <string name="_5h_21m">5h 21m</string>
+    <string name="_3h_21m">3h 21m</string>
+    <string name="_6_lessons">6 lessons</string>
+    <string name="free">Free</string>
+    <string name="laurel_seilha">Laurel Seilha</string>
+    <string name="product_designer">Product Designer</string>
+    <string name="_2_lessons">2 lessons</string>
+    <string name="design">Design</string>
 </resources>

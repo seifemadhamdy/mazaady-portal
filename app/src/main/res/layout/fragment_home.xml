@@ -2,7 +2,6 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/home_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.ui.fragments.HomeFragment">
@@ -10,114 +9,117 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/livestreaming_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="32dp"
                 android:clipToPadding="false"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/upcoming_course_of_this_week"
-                android:layout_width="wrap_content"
+                android:id="@+id/upcoming_course_of_this_week_text_view"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/upcoming_course_of_this_week"
-                android:textColor="#303030"
+                android:textColor="@color/color_303030"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/livestreaming_recycler_view" />
 
             <HorizontalScrollView
-                android:id="@+id/horizontalScrollView"
+                android:id="@+id/horizontal_scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:paddingStart="16dp"
-                android:paddingTop="16dp"
-                android:paddingEnd="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/upcoming_course_of_this_week">
-
-                <com.google.android.material.chip.ChipGroup
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:checkedChip="@id/all_chip"
-                    app:selectionRequired="true"
-                    app:singleSelection="true">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/all_chip"
-                        style="@style/CustomChipStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="All" />
-
-                    <com.google.android.material.chip.Chip
-                        style="@style/CustomChipStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="UI/UX" />
-
-                    <com.google.android.material.chip.Chip
-                        style="@style/CustomChipStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Illustration" />
-
-                    <com.google.android.material.chip.Chip
-                        style="@style/CustomChipStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="3D Animation" />
-                </com.google.android.material.chip.ChipGroup>
-
-            </HorizontalScrollView>
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/course_view_pager_2"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
                 android:layout_marginTop="16dp"
                 android:clipToPadding="false"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                app:layout_constraintBottom_toTopOf="@id/dots_indicator"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
+                app:layout_constraintTop_toBottomOf="@id/upcoming_course_of_this_week_text_view">
 
-            <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-                android:id="@+id/dots_indicator"
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:checkedChip="@id/all_chip"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/all_chip"
+                        style="@style/CourseCategoryChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/all"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/CourseCategoryChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ui_ux"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/CourseCategoryChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/illustration"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/CourseCategoryChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_3d_animation"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/course_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/horizontal_scroll_view" />
+
+            <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
+                android:id="@+id/scrolling_pager_indicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:dotsCornerRadius="8dp"
-                app:dotsSize="16dp"
-                app:dotsSpacing="4dp"
-                app:dotsWidthFactor="2.5"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:progressMode="true" />
+                app:layout_constraintTop_toBottomOf="@+id/course_recycler_view"
+                app:layout_constraintVertical_bias="0.0"
+                app:spi_dotColor="@color/color_EEEEEE"
+                app:spi_dotSelectedColor="@color/color_EC5F5F"
+                app:spi_dotSelectedSize="6dp"
+                app:spi_dotSize="4dp"
+                app:spi_dotSpacing="4dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.appbar.AppBarLayout
@@ -127,74 +129,75 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
             app:layout_scrollFlags="scroll|enterAlways|snap">
 
             <ImageView
-                android:id="@+id/avatar"
+                android:id="@+id/avatar_image_view"
                 android:layout_width="40dp"
                 android:layout_height="0dp"
+                android:contentDescription="@null"
                 android:src="@drawable/avatar"
-                app:layout_constraintBottom_toBottomOf="@+id/points"
+                app:layout_constraintBottom_toBottomOf="@+id/points_text_view"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/name" />
+                app:layout_constraintTop_toTopOf="@+id/name_text_view" />
 
             <TextView
-                android:id="@+id/name"
+                android:id="@+id/name_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Hello, Samuel!"
-                android:textColor="#303030"
+                android:text="@string/hello_samuel"
+                android:textColor="@color/color_303030"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/points"
-                app:layout_constraintEnd_toStartOf="@+id/notifications"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/avatar"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toTopOf="@+id/points_text_view"
+                app:layout_constraintStart_toEndOf="@+id/avatar_image_view"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
 
             <ImageView
-                android:id="@+id/award"
+                android:id="@+id/award_image_view"
                 android:layout_width="16dp"
                 android:layout_height="0dp"
+                android:contentDescription="@null"
                 android:src="@drawable/ic_award"
-                app:layout_constraintBottom_toBottomOf="@+id/points"
+                app:layout_constraintBottom_toBottomOf="@+id/points_text_view"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@+id/points"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toEndOf="@+id/avatar"
-                app:layout_constraintStart_toStartOf="@+id/name"
-                app:layout_constraintTop_toTopOf="@+id/points" />
+                app:layout_constraintStart_toStartOf="@+id/name_text_view"
+                app:layout_constraintTop_toTopOf="@+id/points_text_view"
+                tools:ignore="ImageContrastCheck" />
 
             <TextView
-                android:id="@+id/points"
+                android:id="@+id/points_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="6dp"
                 android:text="@string/_1600_points"
-                android:textColor="#FCD034"
+                android:textColor="@color/color_FCD034"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/notifications"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/award"
-                app:layout_constraintTop_toBottomOf="@+id/name" />
+                app:layout_constraintStart_toEndOf="@+id/award_image_view"
+                app:layout_constraintTop_toBottomOf="@+id/name_text_view"
+                tools:ignore="TextContrastCheck" />
 
-            <ImageView
-                android:id="@+id/notifications"
-                android:layout_width="24dp"
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_marginStart="16dp"
-                android:src="@drawable/ic_notifications"
-                app:layout_constraintBottom_toBottomOf="@+id/points"
+                app:icon="@drawable/ic_notifications"
+                app:iconTint="@null"
+                app:layout_constraintBottom_toBottomOf="@+id/points_text_view"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/name" />
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/name_text_view"
+                app:layout_constraintTop_toTopOf="@+id/name_text_view"
+                tools:ignore="SpeakableTextPresentCheck" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

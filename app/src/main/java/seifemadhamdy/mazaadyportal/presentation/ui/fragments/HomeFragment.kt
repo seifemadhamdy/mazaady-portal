@@ -4,19 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import seifemadhamdy.mazaadyportal.R
 import seifemadhamdy.mazaadyportal.databinding.FragmentHomeBinding
+import seifemadhamdy.mazaadyportal.domain.model.CourseItemModel
 import seifemadhamdy.mazaadyportal.domain.model.LivestreamingItemModel
-import seifemadhamdy.mazaadyportal.presentation.ui.adapters.LivestreamingListAdapter
+import seifemadhamdy.mazaadyportal.presentation.ui.adapters.CourseItemListAdapter
+import seifemadhamdy.mazaadyportal.presentation.ui.adapters.LivestreamingItemListAdapter
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val livestreamingListAdapter = LivestreamingListAdapter { item ->
-        // Handle item click
+    private val livestreamingItemListAdapter = LivestreamingItemListAdapter { item ->
+        Toast.makeText(context, "Item #${item.id} clicked.", Toast.LENGTH_SHORT).show()
+    }
+
+    private val courseItemListAdapter = CourseItemListAdapter { item ->
+        Toast.makeText(context, "Item #${item.id} clicked.", Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreateView(
@@ -28,22 +36,70 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView()
-
-        val items = mutableListOf<LivestreamingItemModel>()
-
-        for (i in 0..3) {
-            items.add(LivestreamingItemModel(id = i, avatarResId = R.drawable.avatar_live))
-        }
-
-        livestreamingListAdapter.submitList(items)
+        setupLivestreamingRecyclerView()
+        populateLivestreamingRecyclerView()
+        setupCourseRecyclerView()
+        populateCourseRecyclerView()
+        binding.scrollingPagerIndicator.attachToRecyclerView(binding.courseRecyclerView)
     }
 
-    private fun setupRecyclerView() {
+    private fun setupLivestreamingRecyclerView() {
         binding.livestreamingRecyclerView.apply {
-            adapter = livestreamingListAdapter
+            adapter = livestreamingItemListAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            setHasFixedSize(true)
         }
+    }
+
+    private fun populateLivestreamingRecyclerView() {
+        livestreamingItemListAdapter.submitList(mutableListOf<LivestreamingItemModel>().apply {
+            add(LivestreamingItemModel(id = 1, avatarResId = R.drawable.avatar_live_1))
+            add(LivestreamingItemModel(id = 2, avatarResId = R.drawable.avatar_live_2))
+            add(LivestreamingItemModel(id = 3, avatarResId = R.drawable.avatar_live_3))
+            add(LivestreamingItemModel(id = 4, avatarResId = R.drawable.avatar_live_4))
+        })
+    }
+
+    private fun setupCourseRecyclerView() {
+        binding.courseRecyclerView.apply {
+            adapter = courseItemListAdapter
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            setHasFixedSize(true)
+            PagerSnapHelper().attachToRecyclerView(this)
+        }
+    }
+
+    private fun populateCourseRecyclerView() {
+        courseItemListAdapter.submitList(mutableListOf<CourseItemModel>().apply {
+            add(
+                CourseItemModel(
+                    id = 1,
+                    courseResId = R.drawable.course_background_1,
+                    title = resources.getString(
+                        R.string.step_design_sprint_for_nbeginner
+                    ),
+                    time = resources.getString(R.string._5h_21m),
+                    firstTagText = resources.getString(R.string._6_lessons),
+                    secondTagText = resources.getString(R.string.ui_ux),
+                    thirdTagText = resources.getString(R.string.free),
+                    avatarResId = R.drawable.avatar_course_1
+                )
+            )
+            add(
+                CourseItemModel(
+                    id = 2,
+                    courseResId = R.drawable.course_background_2,
+                    isLabelVisible = false,
+                    title = resources.getString(
+                        R.string.basic_skill_for_sketch_nillustration
+                    ),
+                    time = resources.getString(R.string._3h_21m),
+                    firstTagText = resources.getString(R.string._2_lessons),
+                    secondTagText = resources.getString(R.string.design),
+                    avatarResId = R.drawable.avatar_course_2
+                )
+            )
+        })
     }
 
     override fun onDestroyView() {

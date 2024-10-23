@@ -6,13 +6,9 @@ import seifemadhamdy.mazaadyportal.domain.model.LivestreamingItemModel
 class LivestreamingItemDiffCallback : DiffUtil.ItemCallback<LivestreamingItemModel>() {
     override fun areItemsTheSame(
         oldItem: LivestreamingItemModel, newItem: LivestreamingItemModel
-    ): Boolean {
-        return oldItem.id == newItem.id
-    }
+    ): Boolean = oldItem.id == newItem.id
 
     override fun areContentsTheSame(
         oldItem: LivestreamingItemModel, newItem: LivestreamingItemModel
-    ): Boolean {
-        return oldItem == newItem
-    }
+    ): Boolean = oldItem == newItem
 }
