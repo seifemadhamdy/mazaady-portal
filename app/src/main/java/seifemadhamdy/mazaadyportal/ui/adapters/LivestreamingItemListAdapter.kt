@@ -1,12 +1,15 @@
-package seifemadhamdy.mazaadyportal.presentation.ui.adapters
+package seifemadhamdy.mazaadyportal.ui.adapters
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import seifemadhamdy.mazaadyportal.domain.model.LivestreamingItemModel
+import seifemadhamdy.mazaadyportal.ui.models.LivestreamingItemAdapterModel
 
 class LivestreamingItemListAdapter(
-    private val onItemClick: (LivestreamingItemModel) -> Unit
-) : ListAdapter<LivestreamingItemModel, LivestreamingItemViewHolder>(LivestreamingItemDiffCallback()) {
+    private val onItemClick: (LivestreamingItemAdapterModel) -> Unit
+) :
+    ListAdapter<LivestreamingItemAdapterModel, LivestreamingItemViewHolder>(
+        LivestreamingItemDiffCallback()
+    ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LivestreamingItemViewHolder =
         LivestreamingItemViewHolder.from(parent)

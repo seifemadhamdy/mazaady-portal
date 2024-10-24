@@ -24,4 +24,9 @@
     <string name="product_designer">Product Designer</string>
     <string name="_2_lessons">2 lessons</string>
     <string name="design">Design</string>
+    <string name="main_category">Main Category</string>
+    <string name="sub_category">Sub Category</string>
+    <string name="submit">Submit</string>
+    <string name="other">Other</string>
+    <string name="specify_here">Specify here</string>
 </resources>

@@ -1,4 +1,4 @@
-package seifemadhamdy.mazaadyportal.presentation.ui.activities
+package seifemadhamdy.mazaadyportal.ui.activity
 
 import android.graphics.Color
 import android.os.Bundle
@@ -16,7 +16,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.launch
 import seifemadhamdy.mazaadyportal.R
 import seifemadhamdy.mazaadyportal.databinding.ActivityAppBinding
-import seifemadhamdy.mazaadyportal.presentation.ui.viewmodels.AppViewModel
+import seifemadhamdy.mazaadyportal.ui.viewmodels.AppViewModel
 
 class AppActivity : AppCompatActivity() {
     private val binding: ActivityAppBinding by lazy { ActivityAppBinding.inflate(layoutInflater) }
@@ -43,7 +43,8 @@ class AppActivity : AppCompatActivity() {
 
     private fun setupNavigation() {
         navController =
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
+                .navController
     }
 
     private fun addBadgeToTabLayout() {

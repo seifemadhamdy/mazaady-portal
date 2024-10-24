@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/home"
-        android:name="seifemadhamdy.mazaadyportal.presentation.ui.fragments.HomeFragment"
+        android:name="seifemadhamdy.mazaadyportal.ui.fragments.HomeFragment"
         android:label="@string/home" />
 
     <action
@@ -15,7 +15,7 @@
 
     <fragment
         android:id="@+id/form"
-        android:name="seifemadhamdy.mazaadyportal.presentation.ui.fragments.FormFragment"
+        android:name="seifemadhamdy.mazaadyportal.ui.fragments.FormFragment"
         android:label="@string/form" />
 
     <action

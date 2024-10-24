@@ -3,11 +3,13 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
+
     <path
         android:fillAlpha="0.4"
         android:fillColor="@color/color_EC5F5F"
         android:pathData="M16.076,2H19.462C20.864,2 22,3.146 22,4.56V7.975C22,9.389 20.864,10.535 19.462,10.535H16.076C14.673,10.535 13.537,9.389 13.537,7.975V4.56C13.537,3.146 14.673,2 16.076,2Z"
         android:strokeAlpha="0.4" />
+
     <path
         android:fillColor="@color/color_EC5F5F"
         android:fillType="evenOdd"

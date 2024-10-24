@@ -1,8 +1,8 @@
-package seifemadhamdy.mazaadyportal.domain.model
+package seifemadhamdy.mazaadyportal.ui.models
 
 import androidx.annotation.DrawableRes
 
-data class CourseItemModel(
+data class CourseItemAdapterModel(
     val id: Int,
     @DrawableRes val courseResId: Int,
     val isLabelVisible: Boolean = true,
@@ -11,5 +11,5 @@ data class CourseItemModel(
     val firstTagText: String,
     val secondTagText: String,
     val thirdTagText: String? = null,
-    @DrawableRes val avatarResId: Int
+    @DrawableRes val avatarResId: Int,
 )

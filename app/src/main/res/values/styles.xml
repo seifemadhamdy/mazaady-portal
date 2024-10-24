@@ -28,4 +28,13 @@
         <item name="chipStartPadding">4dp</item>
         <item name="chipEndPadding">4dp</item>
     </style>
+
+    <style name="TextInputLayoutShapeAppearance">
+        <item name="cornerFamily">?attr/shapeCornerFamily</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <style name="ExposedDropDownStyle" parent="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="shapeAppearance">@style/TextInputLayoutShapeAppearance</item>
+    </style>
 </resources>

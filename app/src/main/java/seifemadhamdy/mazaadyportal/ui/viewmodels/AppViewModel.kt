@@ -1,4 +1,4 @@
-package seifemadhamdy.mazaadyportal.presentation.ui.viewmodels
+package seifemadhamdy.mazaadyportal.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +11,7 @@ class AppViewModel : ViewModel() {
 
     enum class TabItem {
         HOME,
-        FORM
+        FORM,
     }
 
     fun onTabSelected(position: Int) {

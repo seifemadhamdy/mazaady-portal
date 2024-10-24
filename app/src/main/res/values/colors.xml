@@ -141,6 +141,7 @@
     <color name="md_theme_surfaceContainer_highContrast">#FBEAEB</color>
     <color name="md_theme_surfaceContainerHigh_highContrast">#F6E4E5</color>
     <color name="md_theme_surfaceContainerHighest_highContrast">#F0DEDF</color>
+
     <!--Design Specific Colors-->
     <color name="color_9D9FA0">#FF9D9FA0</color>
     <color name="color_EC5F5F">#FFEC5F5F</color>

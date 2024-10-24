@@ -1,12 +1,11 @@
-package seifemadhamdy.mazaadyportal.presentation.ui.adapters
+package seifemadhamdy.mazaadyportal.ui.adapters
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import seifemadhamdy.mazaadyportal.domain.model.CourseItemModel
+import seifemadhamdy.mazaadyportal.ui.models.CourseItemAdapterModel
 
-class CourseItemListAdapter(
-    private val onItemClick: (CourseItemModel) -> Unit
-) : ListAdapter<CourseItemModel, CourseItemViewHolder>(CourseItemDiffCallback()) {
+class CourseItemListAdapter(private val onItemClick: (CourseItemAdapterModel) -> Unit) :
+    ListAdapter<CourseItemAdapterModel, CourseItemViewHolder>(CourseItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseItemViewHolder =
         CourseItemViewHolder.from(parent)
