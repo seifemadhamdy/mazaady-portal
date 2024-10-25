@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -96,7 +97,7 @@ class FormFragment : Fragment() {
             Observer { subCategoryProperties ->
                 binding.dynamicPropertiesContainer.removeAllViews()
 
-                subCategoryProperties.forEach { property -> setupPropertyView(property) }
+                subCategoryProperties.forEach { property -> setupPropertyView(property = property) }
             },
         )
 
@@ -195,9 +196,14 @@ class FormFragment : Fragment() {
         }
     }
 
-    private fun setupPropertyView(property: PropertiesDataDto, injectionIndex: Int? = null) {
+    private fun setupPropertyView(
+        parentViewId: Int? = null,
+        property: PropertiesDataDto,
+        injectionIndex: Int? = null,
+    ) {
         val linearLayout =
             LinearLayout(context).apply {
+                tag = parentViewId
                 orientation = LinearLayout.VERTICAL
                 layoutParams =
                     LinearLayout.LayoutParams(
@@ -218,6 +224,8 @@ class FormFragment : Fragment() {
                     hint = property.name
                 }
 
+        linearLayout.addView(textInputLayout)
+
         val autoCompleteTextView =
             AutoCompleteTextView(context).apply {
                 layoutParams =
@@ -227,6 +235,7 @@ class FormFragment : Fragment() {
                     )
             }
 
+        textInputLayout.addView(autoCompleteTextView)
         val options = listOf(resources.getString(R.string.other)) + property.options.map { it.name }
 
         val adapter =
@@ -236,14 +245,12 @@ class FormFragment : Fragment() {
             setAdapter(adapter)
 
             setOnItemClickListener { parent, view, position, id ->
-                val selectedOption = options[position]
-
-                for (i in linearLayout.childCount - 1 downTo 0) {
-                    val child = linearLayout.getChildAt(i)
-                    if (child.id != textInputLayout.id) {
-                        linearLayout.removeViewAt(i)
-                    }
+                for (child in binding.dynamicPropertiesContainer.children) {
+                    if (child.tag == textInputLayout.id)
+                        binding.dynamicPropertiesContainer.removeView(child)
                 }
+
+                val selectedOption = options[position]
 
                 if (selectedOption == resources.getString(R.string.other)) {
                     val otherEditText =
@@ -255,6 +262,7 @@ class FormFragment : Fragment() {
                                     LinearLayout.LayoutParams.WRAP_CONTENT,
                                 )
                         }
+
                     linearLayout.addView(otherEditText)
                 } else {
                     val selectedProperty = property.options.find { it.name == selectedOption }
@@ -262,14 +270,13 @@ class FormFragment : Fragment() {
                     if (selectedProperty?.child == true) {
                         val currentIndex =
                             binding.dynamicPropertiesContainer.indexOfChild(linearLayout)
-                        selectedProperty.id?.let { fetchChildOptions(it, currentIndex + 1) }
+                        selectedProperty.id?.let {
+                            fetchChildOptions(textInputLayout.id, it, currentIndex + 1)
+                        }
                     }
                 }
             }
         }
-
-        linearLayout.addView(textInputLayout)
-        textInputLayout.addView(autoCompleteTextView)
 
         if (injectionIndex == null) {
             binding.dynamicPropertiesContainer.addView(linearLayout)
@@ -278,14 +285,14 @@ class FormFragment : Fragment() {
         }
     }
 
-    private fun fetchChildOptions(optionId: Int, injectionIndex: Int) {
+    private fun fetchChildOptions(parentViewId: Int?, optionId: Int, injectionIndex: Int) {
         CoroutineScope(Dispatchers.Default).launch {
             withContext(Dispatchers.IO) {
                 val childOptions = optionsRepository.getOptionsChildByOptionId(optionId = optionId)
                 withContext(Dispatchers.Default) {
                     childOptions?.forEach { childProperty ->
                         withContext(Dispatchers.Main) {
-                            setupPropertyView(childProperty, injectionIndex)
+                            setupPropertyView(parentViewId, childProperty, injectionIndex)
                         }
                     }
                 }
