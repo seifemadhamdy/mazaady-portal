@@ -16,6 +16,7 @@
             style="@style/ExposedDropDownStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:hint="@string/main_category"
             android:labelFor="@id/main_category_auto_complete_text_view">
 
@@ -32,6 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:enabled="false"
             android:hint="@string/sub_category"
             android:labelFor="@id/sub_category_auto_complete_text_view">
 
@@ -54,6 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:enabled="false"
             android:text="@string/submit" />
 
         <TableLayout

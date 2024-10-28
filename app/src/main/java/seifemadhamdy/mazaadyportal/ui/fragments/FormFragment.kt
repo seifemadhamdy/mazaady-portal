@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,23 +14,27 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TableRow
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.core.view.children
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputLayout
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import seifemadhamdy.mazaadyportal.R
 import seifemadhamdy.mazaadyportal.data.remote.api.RetrofitClient
 import seifemadhamdy.mazaadyportal.data.remote.dto.PropertiesDataDto
-import seifemadhamdy.mazaadyportal.data.repository.CategoriesRepositoryImpl
-import seifemadhamdy.mazaadyportal.data.repository.OptionsRepositoryImpl
-import seifemadhamdy.mazaadyportal.data.repository.PropertiesRepositoryImpl
+import seifemadhamdy.mazaadyportal.data.remote.dto.PropertiesOptionsDto
+import seifemadhamdy.mazaadyportal.data.remote.network.NetworkConnectivityService
+import seifemadhamdy.mazaadyportal.data.repository.api.CategoriesRepositoryImpl
+import seifemadhamdy.mazaadyportal.data.repository.api.OptionsRepositoryImpl
+import seifemadhamdy.mazaadyportal.data.repository.api.PropertiesRepositoryImpl
+import seifemadhamdy.mazaadyportal.data.repository.network.NetworkConnectivityRepositoryImpl
 import seifemadhamdy.mazaadyportal.databinding.FragmentFormBinding
+import seifemadhamdy.mazaadyportal.ui.models.SelectedPropertyItem
 import seifemadhamdy.mazaadyportal.ui.viewmodels.FormViewModel
 import seifemadhamdy.mazaadyportal.ui.viewmodels.FormViewModelFactory
 
@@ -43,6 +48,11 @@ class FormFragment : Fragment() {
     private val apiService by lazy { RetrofitClient.apiService }
     private val categoriesRepository by lazy { CategoriesRepositoryImpl(apiService = apiService) }
     private val propertiesRepository by lazy { PropertiesRepositoryImpl(apiService = apiService) }
+    private val networkConnectivityRepository by lazy {
+        NetworkConnectivityRepositoryImpl(
+            networkConnectivityService = NetworkConnectivityService(context = requireContext())
+        )
+    }
     private val optionsRepository by lazy { OptionsRepositoryImpl(apiService = apiService) }
 
     override fun onCreateView(
@@ -63,52 +73,64 @@ class FormFragment : Fragment() {
                 FormViewModelFactory(
                     categoriesRepository = categoriesRepository,
                     propertiesRepository = propertiesRepository,
+                    networkConnectivityRepository = networkConnectivityRepository,
                 ),
             )[FormViewModel::class.java]
 
-        viewModel.mainCategories.observe(
-            viewLifecycleOwner,
-            Observer { categories ->
-                val adapter =
-                    ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_dropdown_item_1line,
-                        categories.map { it.name },
-                    )
-                binding.mainCategoryAutoCompleteTextView.setAdapter(adapter)
-            },
-        )
+        viewModel.isNetworkAvailable.observe(viewLifecycleOwner) { isNetworkAvailable ->
+            if (isNetworkAvailable) {
+                viewModel.fetchMainCategories()
+            } else {
+                resetUi()
+                Toast.makeText(context, "Network is unavailable.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
-        viewModel.subCategories.observe(
-            viewLifecycleOwner,
-            Observer { subCategories ->
-                val adapter =
-                    ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_dropdown_item_1line,
-                        subCategories.map { it.name },
-                    )
-                binding.subCategoryAutoCompleteTextView.setAdapter(adapter)
-            },
-        )
+        viewModel.mainCategories.observe(viewLifecycleOwner) { categories ->
+            val adapter =
+                ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_dropdown_item_1line,
+                    categories.map { it.name },
+                )
 
-        viewModel.subCategoryProperties.observe(
-            viewLifecycleOwner,
-            Observer { subCategoryProperties ->
-                binding.dynamicPropertiesContainer.removeAllViews()
+            binding.mainCategoryAutoCompleteTextView.setAdapter(adapter)
+            binding.mainCategoryTextInputLayout.isEnabled = true
+        }
 
-                subCategoryProperties.forEach { property -> setupPropertyView(property = property) }
-            },
-        )
+        viewModel.subCategories.observe(viewLifecycleOwner) { subCategories ->
+            val adapter =
+                ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_dropdown_item_1line,
+                    subCategories.map { it.name },
+                )
 
-        viewModel.fetchMainCategories()
+            binding.subCategoryAutoCompleteTextView.setAdapter(adapter)
+            binding.subCategoryTextInputLayout.isEnabled = true
+        }
+
+        viewModel.subCategoryProperties.observe(viewLifecycleOwner) { subCategoryProperties ->
+            binding.dynamicPropertiesContainer.removeAllViews()
+
+            subCategoryProperties.forEach { property -> setupPropertyView(property = property) }
+        }
+
+        viewModel.selectedProperties.observe(viewLifecycleOwner) { selectedProperties ->
+            if (binding.resultsTable.visibility != View.GONE)
+                binding.resultsTable.visibility = View.GONE
+
+            if (selectedProperties.isNotEmpty()) {
+                updateTable(selectedProperties = selectedProperties)
+                binding.submitButton.isEnabled = true
+            }
+        }
 
         binding.mainCategoryAutoCompleteTextView.setOnItemClickListener { parent, view, position, id
             ->
-            val selectedCategory = viewModel.mainCategories.value?.get(position)
-            binding.subCategoryAutoCompleteTextView.setText("")
-            binding.subCategoryAutoCompleteTextView.setAdapter(null)
+            resetSubCategory()
             binding.dynamicPropertiesContainer.removeAllViews()
+            val selectedCategory = viewModel.mainCategories.value?.get(position)
             selectedCategory?.let { viewModel.updateSubCategories(it.children) }
         }
 
@@ -118,28 +140,89 @@ class FormFragment : Fragment() {
             selectedSubCategory?.id?.let { viewModel.fetchPropertiesBySubCategoryId(it) }
         }
 
-        binding.submitButton.setOnClickListener {
-            val mainCategoryId =
-                viewModel.mainCategories.value
-                    ?.find { binding.mainCategoryAutoCompleteTextView.text.toString() == it.name }
-                    ?.id
-            val subCategoryId =
-                viewModel.subCategories.value
-                    ?.find { binding.subCategoryAutoCompleteTextView.text.toString() == it.name }
-                    ?.id
-
-            if (mainCategoryId != null && subCategoryId != null)
-                setupTable(mainCategoryValue = mainCategoryId, subCategoryValue = subCategoryId)
-        }
+        binding.submitButton.setOnClickListener { binding.resultsTable.visibility = View.VISIBLE }
     }
 
-    private fun setupTable(mainCategoryValue: Int, subCategoryValue: Int) {
-        binding.resultsTable.apply {
-            removeAllViews()
+    private fun resetMainCategory() {
+        binding.mainCategoryAutoCompleteTextView.setText("")
+        binding.mainCategoryAutoCompleteTextView.setAdapter(null)
+        viewModel.resetMainCategories()
+    }
 
-            addView(createTableRow("Key", "Value", true))
-            addView(createTableRow("Main Category", mainCategoryValue.toString()))
-            addView(createTableRow("Sub Category", subCategoryValue.toString()))
+    private fun resetSubCategory() {
+        binding.subCategoryAutoCompleteTextView.setText("")
+        binding.subCategoryAutoCompleteTextView.setAdapter(null)
+        viewModel.resetSubCategories()
+    }
+
+    private fun resetUi() {
+        binding.mainCategoryTextInputLayout.apply {
+            isEnabled = false
+            isFocusable = false
+            isFocusableInTouchMode = false
+            isClickable = false
+        }
+
+        resetMainCategory()
+
+        binding.mainCategoryAutoCompleteTextView.apply {
+            isEnabled = false
+            isFocusable = false
+            isFocusableInTouchMode = false
+            isClickable = false
+            setOnClickListener(null)
+        }
+
+        binding.subCategoryTextInputLayout.apply {
+            isEnabled = false
+            isFocusable = false
+            isFocusableInTouchMode = false
+            isClickable = false
+        }
+
+        resetSubCategory()
+
+        binding.subCategoryAutoCompleteTextView.apply {
+            isEnabled = false
+            isFocusable = false
+            isFocusableInTouchMode = false
+            isClickable = false
+            setOnClickListener(null)
+        }
+
+        binding.dynamicPropertiesContainer.removeAllViews()
+        binding.submitButton.isEnabled = false
+        viewModel.resetSelectedProperties()
+
+        if (binding.resultsTable.visibility != View.GONE)
+            binding.resultsTable.visibility = View.GONE
+    }
+
+    private fun updateTable(selectedProperties: List<SelectedPropertyItem>) {
+        binding.resultsTable.removeAllViews()
+
+        binding.resultsTable.apply {
+            addView(createTableRow(property = "Property", value = "Value", isHeader = true))
+
+            addView(
+                createTableRow(
+                    property = binding.mainCategoryTextInputLayout.hint.toString(),
+                    value = binding.mainCategoryAutoCompleteTextView.text.toString(),
+                )
+            )
+
+            addView(
+                createTableRow(
+                    property = binding.subCategoryTextInputLayout.hint.toString(),
+                    value = binding.subCategoryAutoCompleteTextView.text.toString(),
+                )
+            )
+        }
+
+        selectedProperties.forEach { item ->
+            binding.resultsTable.addView(
+                createTableRow(item.parentName, item.selectedProperty.name.toString())
+            )
         }
     }
 
@@ -158,6 +241,7 @@ class FormFragment : Fragment() {
             addView(
                 TextView(context).apply {
                     text = property
+                    gravity = Gravity.CENTER
                     setPadding(16, 16, 16, 16)
                     setTypeface(null, if (isHeader) Typeface.BOLD else Typeface.NORMAL)
 
@@ -165,7 +249,12 @@ class FormFragment : Fragment() {
                         setBackgroundResource(R.color.color_EC5F5F)
                         setTextColor(Color.WHITE)
                     } else {
-                        setBackgroundResource(R.color.color_EEEEEE)
+                        background =
+                            GradientDrawable().apply {
+                                shape = GradientDrawable.RECTANGLE
+                                setStroke(1, Color.BLACK)
+                            }
+
                         setTextColor(Color.BLACK)
                     }
                 }
@@ -174,36 +263,30 @@ class FormFragment : Fragment() {
             addView(
                 TextView(context).apply {
                     text = value
+                    gravity = Gravity.CENTER
                     setPadding(16, 16, 16, 16)
                     setTypeface(null, if (isHeader) Typeface.BOLD else Typeface.NORMAL)
                     if (isHeader) {
                         setBackgroundResource(R.color.color_FCD034)
                         setTextColor(Color.WHITE)
                     } else {
-                        setBackgroundResource(R.color.color_EEEEEE)
+                        background =
+                            GradientDrawable().apply {
+                                shape = GradientDrawable.RECTANGLE
+                                setStroke(1, Color.BLACK)
+                            }
+
                         setTextColor(Color.BLACK)
                     }
                 }
             )
-
-            if (!isHeader) {
-                background =
-                    GradientDrawable().apply {
-                        shape = GradientDrawable.RECTANGLE
-                        setStroke(1, Color.LTGRAY)
-                    }
-            }
         }
     }
 
-    private fun setupPropertyView(
-        parentViewId: Int? = null,
-        property: PropertiesDataDto,
-        injectionIndex: Int? = null,
-    ) {
+    private fun setupPropertyView(parentViewId: Int? = null, property: PropertiesDataDto) {
         val linearLayout =
             LinearLayout(context).apply {
-                tag = parentViewId
+                id = parentViewId ?: View.generateViewId()
                 orientation = LinearLayout.VERTICAL
                 layoutParams =
                     LinearLayout.LayoutParams(
@@ -215,7 +298,6 @@ class FormFragment : Fragment() {
         val textInputLayout =
             TextInputLayout(ContextThemeWrapper(requireContext(), R.style.ExposedDropDownStyle))
                 .apply {
-                    id = View.generateViewId()
                     layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -244,10 +326,9 @@ class FormFragment : Fragment() {
         autoCompleteTextView.apply {
             setAdapter(adapter)
 
-            setOnItemClickListener { parent, view, position, id ->
-                for (child in binding.dynamicPropertiesContainer.children) {
-                    if (child.tag == textInputLayout.id)
-                        binding.dynamicPropertiesContainer.removeView(child)
+            setOnItemClickListener { _, _, position, _ ->
+                while (linearLayout.childCount > 1) {
+                    linearLayout.removeViewAt(1)
                 }
 
                 val selectedOption = options[position]
@@ -263,39 +344,77 @@ class FormFragment : Fragment() {
                                 )
                         }
 
+                    otherEditText.doOnTextChanged { text, _, _, _ ->
+                        viewModel.updateSelectedProperties(
+                            selectedPropertyItem =
+                                SelectedPropertyItem(
+                                    parentName = textInputLayout.hint.toString(),
+                                    selectedProperty = PropertiesOptionsDto(name = text.toString()),
+                                )
+                        )
+                    }
+
                     linearLayout.addView(otherEditText)
                 } else {
                     val selectedProperty = property.options.find { it.name == selectedOption }
 
-                    if (selectedProperty?.child == true) {
-                        val currentIndex =
-                            binding.dynamicPropertiesContainer.indexOfChild(linearLayout)
-                        selectedProperty.id?.let {
-                            fetchChildOptions(textInputLayout.id, it, currentIndex + 1)
+                    selectedProperty?.let { selectedProperty ->
+                        viewModel.updateSelectedProperties(
+                            selectedPropertyItem =
+                                SelectedPropertyItem(
+                                    parentName = textInputLayout.hint.toString(),
+                                    selectedProperty = selectedProperty,
+                                )
+                        )
+
+                        if (
+                            selectedProperty.child == true &&
+                                viewModel.isNetworkAvailable.value == true
+                        ) {
+                            parentViewId?.let { parentViewId ->
+                                val parentLayout =
+                                    binding.dynamicPropertiesContainer.findViewById<LinearLayout>(
+                                        parentViewId
+                                    )
+
+                                val parentChildCount = parentLayout.childCount
+
+                                val currentViewIndex =
+                                    (0 until parentChildCount).firstOrNull {
+                                        parentLayout.getChildAt(it).id == linearLayout.id
+                                    }
+
+                                if (currentViewIndex != null) {
+                                    while (parentLayout.childCount > currentViewIndex + 1) {
+                                        parentLayout.removeViewAt(currentViewIndex + 1)
+                                    }
+                                }
+                            }
+
+                            selectedProperty.id?.let { fetchChildOptions(linearLayout.id, it) }
                         }
                     }
                 }
             }
         }
 
-        if (injectionIndex == null) {
+        if (parentViewId == null) {
             binding.dynamicPropertiesContainer.addView(linearLayout)
         } else {
-            binding.dynamicPropertiesContainer.addView(linearLayout, injectionIndex)
+            binding.dynamicPropertiesContainer
+                .findViewById<LinearLayout>(parentViewId)
+                .addView(linearLayout)
         }
     }
 
-    private fun fetchChildOptions(parentViewId: Int?, optionId: Int, injectionIndex: Int) {
-        CoroutineScope(Dispatchers.Default).launch {
-            withContext(Dispatchers.IO) {
-                val childOptions = optionsRepository.getOptionsChildByOptionId(optionId = optionId)
-                withContext(Dispatchers.Default) {
-                    childOptions?.forEach { childProperty ->
-                        withContext(Dispatchers.Main) {
-                            setupPropertyView(parentViewId, childProperty, injectionIndex)
-                        }
-                    }
+    private fun fetchChildOptions(parentViewId: Int?, optionId: Int) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val childOptions =
+                withContext(Dispatchers.IO) {
+                    optionsRepository.getOptionsChildByOptionId(optionId = optionId)
                 }
+            childOptions?.forEach { childProperty ->
+                setupPropertyView(parentViewId, childProperty)
             }
         }
     }

@@ -1,10 +1,10 @@
-package seifemadhamdy.mazaadyportal.data.repository
+package seifemadhamdy.mazaadyportal.data.repository.api
 
 import retrofit2.Response
 import seifemadhamdy.mazaadyportal.data.remote.api.ApiService
 import seifemadhamdy.mazaadyportal.data.remote.dto.CategoriesBaseResponseDto
 import seifemadhamdy.mazaadyportal.data.remote.dto.CategoriesCategoriesDto
-import seifemadhamdy.mazaadyportal.domain.repository.CategoriesRepository
+import seifemadhamdy.mazaadyportal.domain.repository.api.CategoriesRepository
 
 class CategoriesRepositoryImpl(private val apiService: ApiService) : CategoriesRepository {
     override suspend fun getAllCategories(): List<CategoriesCategoriesDto>? {

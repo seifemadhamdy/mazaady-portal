@@ -1,4 +1,4 @@
-package seifemadhamdy.mazaadyportal.domain.repository
+package seifemadhamdy.mazaadyportal.domain.repository.api
 
 import seifemadhamdy.mazaadyportal.data.remote.dto.CategoriesCategoriesDto
 

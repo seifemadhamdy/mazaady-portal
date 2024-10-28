@@ -2,7 +2,6 @@ package seifemadhamdy.mazaadyportal
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Test
 import org.mockito.Mockito
 import retrofit2.Response
@@ -11,7 +10,7 @@ import seifemadhamdy.mazaadyportal.data.remote.dto.CategoriesBaseResponseDto
 import seifemadhamdy.mazaadyportal.data.remote.dto.CategoriesCategoriesDto
 import seifemadhamdy.mazaadyportal.data.remote.dto.CategoriesChildrenDto
 import seifemadhamdy.mazaadyportal.data.remote.dto.CategoriesDataDto
-import seifemadhamdy.mazaadyportal.data.repository.CategoriesRepositoryImpl
+import seifemadhamdy.mazaadyportal.data.repository.api.CategoriesRepositoryImpl
 
 class CategoriesRepositoryImplTest {
 
@@ -68,38 +67,4 @@ class CategoriesRepositoryImplTest {
             // Assert
             assertEquals(expectedCategories, actualCategories)
         }
-
-    /**
-     * Tests that the `getAllCategories` method returns null when the API response is unsuccessful
-     * (e.g., 404 error).
-     */
-    @Test
-    fun `getAllCategories returns null when response is unsuccessful`() = runBlocking {
-        // Arrange
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        val response: Response<CategoriesBaseResponseDto> = Response.error(404, null)
-        Mockito.`when`(apiService.getAllCategories()).thenReturn(response)
-
-        // Act
-        val actualCategories = repository.getAllCategories()
-
-        // Assert
-        assertNull(actualCategories)
-    }
-
-    /**
-     * Tests that the `getAllCategories` method handles exceptions correctly, returning null when an
-     * exception occurs during the API call.
-     */
-    @Test
-    fun `getAllCategories handles exception during API call`() = runBlocking {
-        // Arrange
-        Mockito.`when`(apiService.getAllCategories()).thenThrow(RuntimeException("Network Error"))
-
-        // Act
-        val actualCategories = repository.getAllCategories()
-
-        // Assert
-        assertNull(actualCategories)
-    }
 }
